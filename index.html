@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket Meadow</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<x-dc>
+<div style="position:fixed;inset:0;overflow:hidden;background:#6CA24A;font-family:'Pixelify Sans',monospace;color:#3b2f22;user-select:none;-webkit-user-select:none">
+  <div ref="{{ wrapRef }}" style="position:absolute;inset:0;cursor:none;touch-action:none">
+    <canvas ref="{{ canvasRef }}" style="width:100%;height:100%;display:block;image-rendering:pixelated"></canvas>
+  </div>
+
+  <div style="position:absolute;top:16px;left:16px;width:min(290px,calc(100% - 32px));display:flex;flex-direction:column;gap:14px;pointer-events:none">
+    <div style="pointer-events:auto;background:#FFF7E6;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:0.08em;color:#c4621c">a pixel garden</div>
+      <h1 style="margin:0;font-size:clamp(30px,4vw,44px);line-height:0.95;font-weight:700;letter-spacing:-0.01em">Pocket Meadow</h1>
+      <p style="margin:0;font-size:15px;line-height:1.35;color:#5a4a36;text-wrap:pretty">Sow flowers, dig ponds, lay paths, herd the sheep. Click anything that moves. Your meadow saves in this browser.</p>
+    </div>
+    <div style="pointer-events:auto;background:#FFF7E6;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;display:flex;flex-direction:column">
+      <button sc-camel-on-click="{{ toggleGoals }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;background:transparent;border:0;cursor:pointer;text-align:left">
+        <span style="font-family:'Silkscreen',monospace;font-size:12px">Goals</span>
+        <span style="font-size:16px;font-weight:600">{{ goalCount }} {{ goalArrow }}</span>
+      </button>
+      <sc-if value="{{ goalsOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:7px;padding:0 14px 14px;max-height:calc(100vh - 470px);min-height:60px;overflow-y:auto;overflow-x:hidden">
+          <sc-for list="{{ goals }}" as="g" hint-placeholder-count="13">
+            <div style="display:flex;gap:9px;align-items:center;font-size:14px;line-height:1.25;color:{{ g.color }}">
+              <span style="width:10px;height:10px;flex:none;border:2px solid #3b2f22;background:{{ g.box }}"></span>
+              <span>{{ g.text }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:16px;left:50%;transform:translateX(-50%);background:#F4C542;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;padding:10px 16px;display:flex;flex-direction:column;gap:2px;align-items:center;max-width:calc(100% - 32px);pointer-events:none;z-index:2">
+      <span style="font-family:'Silkscreen',monospace;font-size:11px">{{ toastLabel }}</span>
+      <span style="font-size:20px;font-weight:700;text-align:center">{{ toast }}</span>
+    </div>
+  </sc-if>
+
+  <div style="position:absolute;top:16px;right:16px;background:#FFF7E6;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;padding:10px 14px;display:flex;flex-direction:column;gap:4px;min-width:150px">
+    <sc-for list="{{ stats }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;justify-content:space-between;gap:16px;font-size:15px;line-height:1.3">
+        <span style="font-family:'Silkscreen',monospace;font-size:11px;color:#7a6a52;align-self:center">{{ row.label }}</span>
+        <span style="font-weight:600">{{ row.value }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none">
+    <div style="background:#3b2f22;color:#FFF7E6;padding:6px 12px;font-size:15px;line-height:1.3;max-width:100%;text-align:center">{{ hint }}</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;pointer-events:auto;max-width:100%">
+      <div style="flex:none;max-width:100%;box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;background:#FFF7E6;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;padding:8px">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="9">
+          <button sc-camel-on-click="{{ t.select }}" title="{{ t.name }}" style="position:relative;width:50px;height:50px;padding:0;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};border:3px solid #3b2f22;box-shadow:{{ t.shadow }};transform:{{ t.tf }};cursor:pointer">
+            <img src="{{ t.icon }}" alt="" style="width:36px;height:36px;image-rendering:pixelated;display:block">
+            <span style="position:absolute;top:0;left:3px;font-family:'Silkscreen',monospace;font-size:10px;line-height:1.2">{{ t.key }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="flex:none;max-width:100%;box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;background:#FFF7E6;border:3px solid #3b2f22;box-shadow:4px 4px 0 #3b2f22;padding:8px">
+        <button sc-camel-on-click="{{ nextSeason }}" title="Season (S)" style="height:50px;min-width:88px;padding:0 10px;background:{{ seasonBg }};border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">{{ seasonLabel }}</button>
+        <button sc-camel-on-click="{{ toggleRain }}" title="Rain or snow (R)" style="height:50px;padding:0 10px;background:{{ rainBg }};border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">{{ rainLabel }}</button>
+        <button sc-camel-on-click="{{ toggleNight }}" title="Night (N)" style="height:50px;padding:0 10px;background:{{ nightBg }};color:{{ nightFg }};border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">Night</button>
+        <button sc-camel-on-click="{{ launchPlane }}" title="Plane (P)" style="height:50px;padding:0 10px;background:#FFF7E6;border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">Plane</button>
+        <button sc-camel-on-click="{{ toggleMusic }}" title="Music (B)" style="height:50px;padding:0 10px;background:{{ musicBg }};border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">Music</button>
+        <button sc-camel-on-click="{{ toggleSound }}" title="All sound (M)" style="height:50px;padding:0 10px;background:{{ soundBg }};border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">{{ soundLabel }}</button>
+        <button sc-camel-on-click="{{ reset }}" title="Start a new meadow" style="height:50px;padding:0 10px;background:#FFF7E6;border:3px solid #3b2f22;cursor:pointer;font-family:'Silkscreen',monospace;font-size:12px">New</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;pixelSize&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:4,&quot;min&quot;:2,&quot;max&quot;:6,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;limits&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;autoPlane&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}"></script>
+</body>
+</html>
